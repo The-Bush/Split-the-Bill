@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Split-the-Bill/static/css/main.1ecbafeb.css",
-    "main.js": "/Split-the-Bill/static/js/main.f5592f4d.js",
+    "main.js": "/Split-the-Bill/static/js/main.2d77d536.js",
     "static/js/787.8b15faa7.chunk.js": "/Split-the-Bill/static/js/787.8b15faa7.chunk.js",
     "index.html": "/Split-the-Bill/index.html",
     "main.1ecbafeb.css.map": "/Split-the-Bill/static/css/main.1ecbafeb.css.map",
-    "main.f5592f4d.js.map": "/Split-the-Bill/static/js/main.f5592f4d.js.map",
+    "main.2d77d536.js.map": "/Split-the-Bill/static/js/main.2d77d536.js.map",
     "787.8b15faa7.chunk.js.map": "/Split-the-Bill/static/js/787.8b15faa7.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1ecbafeb.css",
-    "static/js/main.f5592f4d.js"
+    "static/js/main.2d77d536.js"
   ]
 }
