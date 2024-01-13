@@ -3,7 +3,6 @@
 }
 
 .App-logo {
-  height: 40vmin;
   pointer-events: none;
 }
 
@@ -35,4 +34,8 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+tr td:nth-child(4) {
+  background: #00c3e2;
 }
