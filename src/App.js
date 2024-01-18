@@ -51,7 +51,7 @@ function App() {
       
       <body>
       <img src={logo} alt="logo" />
-        <h1>Split the Bill</h1>
+        <h1>Split the Bill (Test)</h1>
         <TotalsInputForm handleInputChange={handleInputChange} numPeople={numPeople} billTotal={billTotal} />
         <Table numPeople={numPeople} billTotal={billTotal}/>
       </body>
