@@ -23,24 +23,17 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 .App-link {
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 tr td:nth-child(4) {
-  background: #00c3e2;
+  background-color: #282c34;
+  color: #00c3e2;
+  font-weight: bold;
 }
 
 .TotalsInputForm {
@@ -48,13 +41,6 @@ tr td:nth-child(4) {
   justify-content: space-evenly;
 }
 
-.bill-total {
-  width: 10vw;
-}
-
-.num-people {
-  width: 10vw;
-}
 
 
 

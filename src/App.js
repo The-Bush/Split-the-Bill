@@ -14,11 +14,21 @@ function App() {
       
       if (name === 'numPeople') 
       {
-        setNumPeople(parseInt(value, 10));
+
+        if (value > 50)
+        {
+          setNumPeople(50);
+        }
+
+        else
+        {
+          setNumPeople(value);
+        }
+
       } 
       else if (name === 'billTotal') 
       {
-        setBillTotal(parseInt(value, 10));
+        setBillTotal(parseFloat(value, 10));
       }
 
       // Update URL parameters
@@ -54,35 +64,47 @@ function TotalsInputForm({ handleInputChange, numPeople, billTotal }) {
   return (
     <div class="TotalsInputForm">
       <form>
-        <label>Number of people</label>
-        <input 
-          type="number" 
-          name="numPeople" 
-          step="1"
-          min="2"
-          max="50"
-          onChange={handleInputChange} 
-          class="num-people"
-          />
+        <label>People</label>
+        <div class="input-group mb-3">
+          <input 
+            type="number" 
+            name="numPeople" 
+            step="1"
+            min="2"
+            max="50"
+            value={numPeople < 1 ? '' : numPeople}
+            onChange={handleInputChange} 
+            class="form-control"
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Maximum allowed is 50 people"
+            />
+        </div>
       </form>
 
       <form>
         <label>Bill Total</label>
-        <input 
-          type="number" 
-          name="billTotal" 
-          step="0.01"
-          min="0"
-          onChange={handleInputChange} 
-          class="bill-total"
-          />
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+              <input 
+                type="number" 
+                name="billTotal" 
+                step="0.01"
+                min="0"
+                value={billTotal}
+                onChange={handleInputChange} 
+                class="form-control"
+                />
+        </div>
       </form>
     </div>
   );
 }
 
 function Table({ numPeople, billTotal }) {
-  const rows = Array.from({ length: numPeople }, (_, index) => index + 1);
+  const rows = Array.from({ length: Math.max(numPeople, 2) }, (_, index) => index + 1);
 
   const [individualCosts, setIndividualCosts] = useState(() => new Array(numPeople).fill(0));
   const [individualNames, setIndividualNames] = useState(() => new Array(numPeople).fill(''));
@@ -131,7 +153,7 @@ function Table({ numPeople, billTotal }) {
     <table class="table">
       <thead class="">
         <tr>
-          <th>Person</th>
+          <th>Name</th>
           <th>Individual purchases</th>
           <th>Shared purchases</th>
           <th>Total/person</th>
@@ -143,36 +165,45 @@ function Table({ numPeople, billTotal }) {
           <tr key={row} class="">
             <td>
               <form>
+                <div class="input-group mb-3">
                 <input
                   type="text"
                   name="individualNames"
                   value={individualNames[index]}
                   placeholder={`Person ${index}`}
                   onChange={(e) => handleIndividualNameChange(e, index)}
-                  class="individual-names"
-                  size="4"
+                  class="individual-names, form-control"
                 />
+                </div>
               </form>
             </td>
             <td>
               <form>
+              <div class="input-group mb-3">
                 <input
                   type="number"
                   name="individualCosts"
                   step="0.01"
                   min="0"
                   max={billTotal}
-                  placeholder={individualCosts[index] || 0}
+                  placeholder={formatUSD(individualCosts[index] || 0)}
                   onChange={(e) => handleIndividualCostChange(e, index)}
-                  class="individual-costs"
+                  class="individual-costs, form-control"
                   size="1"
                 />
+              </div>
               </form>
             </td>
             <td>{formatUSD((adjustedBillTotal / numPeople || 0))}</td>
             <td>{formatUSD((adjustedBillTotal / numPeople + (individualCosts[index] || 0) || 0))}</td>
           </tr>
         ))}
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>{formatUSD(individualCosts.reduce((sum, cost) => sum + cost, 0) + adjustedBillTotal)} (rounded)</td>
+        </tr>
       </tbody>
     </table>
     </div>
