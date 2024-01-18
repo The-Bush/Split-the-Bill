@@ -1,4 +1,3 @@
-import logo from './money-talk.png';
 import './App.css';
 import { useState, useEffect } from 'react';
 import queryString from 'query-string';
@@ -48,10 +47,8 @@ function App() {
       {/* Bootstrap CDN */}
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"></link>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-      
       <body>
-      <img src={logo} alt="logo" />
-        <h1>Split the Bill</h1>
+        <br></br>
         <TotalsInputForm handleInputChange={handleInputChange} numPeople={numPeople} billTotal={billTotal} />
         <Table numPeople={numPeople} billTotal={billTotal}/>
       </body>
@@ -154,8 +151,14 @@ function Table({ numPeople, billTotal }) {
       <thead class="">
         <tr>
           <th>Name</th>
-          <th>Individual purchases</th>
-          <th>Shared purchases</th>
+          <th
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Input costs this person is individually responsible for."
+          >
+            Individual
+          </th>
+          <th>Shared</th>
           <th>Total/person</th>
           <th></th>
         </tr>
@@ -206,13 +209,17 @@ function Table({ numPeople, billTotal }) {
           <td></td>
           <td></td>
           <td></td>
-          <td>{billTotal > 0 ? formatUSD(individualCosts.reduce((sum, cost) => sum + cost, 0) + adjustedBillTotal) : "Enter bill total to calculate cost per person"}</td>
+          <td>{billTotal > 0 ? formatUSD(individualCosts.reduce((sum, cost) => sum + cost, 0) + adjustedBillTotal) : "Input a Bill Total to get started. Click 'How to Use' at the top of the page for more help."}</td>
         </tr>
       </tbody>
     </table>
     </div>
+    
+    
   );
 }
+
+
 
 function formatUSD(amount)
 {
