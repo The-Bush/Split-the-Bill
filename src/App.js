@@ -21,10 +21,17 @@ function App() {
         setBillTotal(parseInt(value, 10));
       }
 
-      const queryParams = queryString.stringify({ numPeople: numPeople, billTotal: billTotal });
-      window.history.replaceState(null, null, `?${queryParams}`);
+      // Update URL parameters
+      const queryParams = queryString.stringify({ numPeople, billTotal });
+      window.history.replaceState({}, '', `?${queryParams}`);
     }
   
+    useEffect(() => {
+      // Parse URL parameters
+      const queryParams = queryString.parse(window.location.search);
+      setNumPeople(queryParams.numPeople ? parseInt(queryParams.numPeople, 10) : 2);
+      setBillTotal(queryParams.billTotal ? parseInt(queryParams.billTotal, 10) : 0);
+    }, []);
   return (
     <div className="App">
 
@@ -45,7 +52,7 @@ function App() {
 function TotalsInputForm({ handleInputChange, numPeople, billTotal }) {
 
   return (
-    <div className="TotalsInputForm">
+    <div class="TotalsInputForm">
       <form>
         <label>Number of people</label>
         <input 
@@ -53,14 +60,22 @@ function TotalsInputForm({ handleInputChange, numPeople, billTotal }) {
           name="numPeople" 
           step="1"
           min="2"
-          onChange={handleInputChange} />
+          max="50"
+          onChange={handleInputChange} 
+          class="num-people"
+          />
+      </form>
+
+      <form>
         <label>Bill Total</label>
         <input 
           type="number" 
           name="billTotal" 
           step="0.01"
           min="0"
-          onChange={handleInputChange} />
+          onChange={handleInputChange} 
+          class="bill-total"
+          />
       </form>
     </div>
   );
@@ -112,8 +127,9 @@ function Table({ numPeople, billTotal }) {
   }
 
   return (
-    <table class="table table-striped">
-      <thead>
+    <div class="table-responsive">
+    <table class="table">
+      <thead class="">
         <tr>
           <th>Person</th>
           <th>Individual purchases</th>
@@ -124,7 +140,7 @@ function Table({ numPeople, billTotal }) {
       </thead>
       <tbody>
         {rows.map((row, index) => (
-          <tr key={row}>
+          <tr key={row} class="">
             <td>
               <form>
                 <input
@@ -133,6 +149,8 @@ function Table({ numPeople, billTotal }) {
                   value={individualNames[index]}
                   placeholder={`Person ${index}`}
                   onChange={(e) => handleIndividualNameChange(e, index)}
+                  class="individual-names"
+                  size="4"
                 />
               </form>
             </td>
@@ -144,7 +162,10 @@ function Table({ numPeople, billTotal }) {
                   step="0.01"
                   min="0"
                   max={billTotal}
+                  placeholder={individualCosts[index] || 0}
                   onChange={(e) => handleIndividualCostChange(e, index)}
+                  class="individual-costs"
+                  size="1"
                 />
               </form>
             </td>
@@ -154,6 +175,7 @@ function Table({ numPeople, billTotal }) {
         ))}
       </tbody>
     </table>
+    </div>
   );
 }
 

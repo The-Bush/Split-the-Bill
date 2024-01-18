@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .App-logo {
@@ -39,3 +42,19 @@
 tr td:nth-child(4) {
   background: #00c3e2;
 }
+
+.TotalsInputForm {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.bill-total {
+  width: 10vw;
+}
+
+.num-people {
+  width: 10vw;
+}
+
+
+
