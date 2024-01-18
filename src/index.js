@@ -68,8 +68,9 @@ function HowToModal() {
             <ListGroup.Item>Input the bill total in XX.XX format. Ex. 10.99</ListGroup.Item>
             <ListGroup.Item>In the "Name" column, type in the name of the person for the row (optional)</ListGroup.Item>
             <ListGroup.Item>In the "Individual" column, input any costs that the person is responsible for individually (optional)</ListGroup.Item>
+            <ListGroup.Item>The "Shared" column is the cost of the bill MINUS all individual costs divided by the number of people</ListGroup.Item>
             <ListGroup.Item>The calculated price for each individual is shown under the "Total/person" column</ListGroup.Item>
-            <ListGroup.Item>Note: The "Shared" column is the calculated cost of the bill total - individual costs and then divided equally across all</ListGroup.Item>
+
           </ListGroup>
         </Modal.Body>
         <Modal.Footer>
