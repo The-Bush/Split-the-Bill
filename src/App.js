@@ -161,7 +161,7 @@ function Table({ numPeople, billTotal }) {
         </tr>
       </thead>
       <tbody>
-        {rows.map((row, index) => (
+        {billTotal > 0 && rows.map((row, index) => (
           <tr key={row} class="">
             <td>
               <form>
@@ -173,6 +173,7 @@ function Table({ numPeople, billTotal }) {
                   placeholder={`Person ${index}`}
                   onChange={(e) => handleIndividualNameChange(e, index)}
                   class="individual-names, form-control"
+                  size="8"
                 />
                 </div>
               </form>
@@ -180,16 +181,19 @@ function Table({ numPeople, billTotal }) {
             <td>
               <form>
               <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
                 <input
                   type="number"
                   name="individualCosts"
                   step="0.01"
                   min="0"
                   max={billTotal}
-                  placeholder={formatUSD(individualCosts[index] || 0)}
+                  placeholder={individualCosts[index] || 0}
                   onChange={(e) => handleIndividualCostChange(e, index)}
                   class="individual-costs, form-control"
-                  size="1"
+                  size="2"
                 />
               </div>
               </form>
@@ -202,7 +206,7 @@ function Table({ numPeople, billTotal }) {
           <td></td>
           <td></td>
           <td></td>
-          <td>{formatUSD(individualCosts.reduce((sum, cost) => sum + cost, 0) + adjustedBillTotal)} (rounded)</td>
+          <td>{billTotal > 0 ? formatUSD(individualCosts.reduce((sum, cost) => sum + cost, 0) + adjustedBillTotal) : "Enter bill total to calculate cost per person"}</td>
         </tr>
       </tbody>
     </table>
