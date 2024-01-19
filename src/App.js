@@ -1,46 +1,85 @@
 import './App.css';
 import { useState, useEffect } from 'react';
 import queryString from 'query-string';
+import { RWebShare } from "react-web-share";
 
 function App() {
 
   const [numPeople, setNumPeople] = useState(2);
   const [billTotal, setBillTotal] = useState(0);
+  
+  const [individualCosts, setIndividualCosts] = useState(() => new Array(numPeople).fill(0));
+  const [individualNames, setIndividualNames] = useState(() => new Array(numPeople).fill(''));
+
+  const [lastEvent, setLastEvent] = useState(null);
+
+  const [currentURL, setCurrentURL] = useState(null);
 
     const handleInputChange = (event) => 
     {
-      const { name, value } = event.target;
-      
-      if (name === 'numPeople') 
-      {
-
-        if (value > 50)
-        {
-          setNumPeople(50);
-        }
-
-        else
-        {
-          setNumPeople(value);
-        }
-
-      } 
-      else if (name === 'billTotal') 
-      {
-        setBillTotal(parseFloat(value, 10));
-      }
-
-      // Update URL parameters
-      const queryParams = queryString.stringify({ numPeople, billTotal });
-      window.history.replaceState({}, '', `?${queryParams}`);
+      setLastEvent(event);
     }
   
     useEffect(() => {
+      if (lastEvent) {
+        const { name, value } = lastEvent.target;
+      
+        if (name === 'numPeople') 
+        {
+          if (value > 50)
+          {
+            setNumPeople(50);
+          }
+          else if (value < 2)
+          {
+            setNumPeople(2);
+          }
+          else
+          {
+            setNumPeople(value);
+          }
+        } 
+
+        else if (name === 'billTotal') 
+        {
+          setBillTotal(parseFloat(value, 10));
+        }
+
+        // Update URL parameters
+        const queryParams = queryString.stringify({ 
+          numPeople, 
+          billTotal,
+          individualCosts: JSON.stringify(individualCosts),
+          individualNames: JSON.stringify(individualNames),
+        });
+        window.history.replaceState({}, '', `?${queryParams}`);
+        setCurrentURL(window.location.href);
+      }
+    }, [billTotal, numPeople, individualCosts, individualNames, lastEvent]);
+
+    useEffect(() => {
+
       // Parse URL parameters
       const queryParams = queryString.parse(window.location.search);
       setNumPeople(queryParams.numPeople ? parseInt(queryParams.numPeople, 10) : 2);
       setBillTotal(queryParams.billTotal ? parseInt(queryParams.billTotal, 10) : 0);
+
+      // Parse individual costs
+      if (queryParams.individualCosts) {
+        const parsedIndividualCosts = JSON.parse(queryParams.individualCosts);
+        setIndividualCosts(parsedIndividualCosts);
+      }
+
+      // Parse individual names
+      if (queryParams.individualNames) {
+        const parsedIndividualNames = JSON.parse(queryParams.individualNames);
+        setIndividualNames(parsedIndividualNames);
+      }
+      console.log("Parsing URL parameters")
+
     }, []);
+
+  
   return (
     <div className="App">
 
@@ -50,8 +89,21 @@ function App() {
       <body>
         <br></br>
         <TotalsInputForm handleInputChange={handleInputChange} numPeople={numPeople} billTotal={billTotal} />
-        <Table numPeople={numPeople} billTotal={billTotal}/>
+        <Table 
+        numPeople={numPeople} 
+        billTotal={billTotal} 
+        individualCosts={individualCosts} 
+        individualNames={individualNames}
+        setIndividualCosts={setIndividualCosts}
+        setIndividualNames={setIndividualNames}
+        handleInputChange={handleInputChange}/>
+
+      <footer>
+        <br></br>
+        <WebShareGfg currentURL={currentURL} />
+      </footer>
       </body>
+
     </div>
   );
 }
@@ -69,7 +121,7 @@ function TotalsInputForm({ handleInputChange, numPeople, billTotal }) {
             step="1"
             min="2"
             max="50"
-            value={numPeople < 1 ? '' : numPeople}
+            placeholder={numPeople}
             onChange={handleInputChange} 
             class="form-control"
             data-toggle="tooltip"
@@ -90,7 +142,7 @@ function TotalsInputForm({ handleInputChange, numPeople, billTotal }) {
                 name="billTotal" 
                 step="0.01"
                 min="0"
-                value={billTotal}
+                placeholder={billTotal || 0.00}
                 onChange={handleInputChange} 
                 class="form-control"
                 />
@@ -100,12 +152,8 @@ function TotalsInputForm({ handleInputChange, numPeople, billTotal }) {
   );
 }
 
-function Table({ numPeople, billTotal }) {
+function Table({ numPeople, billTotal, individualCosts, individualNames, setIndividualCosts, setIndividualNames, handleInputChange }) {
   const rows = Array.from({ length: Math.max(numPeople, 2) }, (_, index) => index + 1);
-
-  const [individualCosts, setIndividualCosts] = useState(() => new Array(numPeople).fill(0));
-  const [individualNames, setIndividualNames] = useState(() => new Array(numPeople).fill(''));
-
   const [adjustedBillTotal, setAdjustedBillTotal] = useState(billTotal);
 
   useEffect(() => {
@@ -123,7 +171,7 @@ function Table({ numPeople, billTotal }) {
     if (event.target.value === '') {
       newIndividualCosts[index] = 0;
     }
-    // if the input is greater than adjusted bill total, set it to the adjusted bill total
+    // if the input is greater than adjusted bill total, set it to the bill total
     else if (event.target.value > billTotal) {
       newIndividualCosts[index] = billTotal;
     }
@@ -137,12 +185,14 @@ function Table({ numPeople, billTotal }) {
       newIndividualCosts[index] = parseFloat(event.target.value);
     }
     setIndividualCosts(newIndividualCosts);
+    handleInputChange(event);
   };
 
   const handleIndividualNameChange = (event, index) => {
     const newIndividualNames = [...individualNames];
     newIndividualNames[index] = event.target.value;
     setIndividualNames(newIndividualNames);
+    handleInputChange(event);
   }
 
   return (
@@ -219,7 +269,24 @@ function Table({ numPeople, billTotal }) {
   );
 }
 
-
+function WebShareGfg({currentURL}) {
+  return (
+        <div>
+          <RWebShare
+            data={{
+              text: "Your friend is sharing the bill with you!",
+              url: currentURL || window.location.href,
+              title: "Split the Bill",
+            }}
+            onClick={() =>
+              console.log("shared successfully!")
+            }
+          >
+            <button type="button" class="btn btn-outline-info">Share Bill</button>
+          </RWebShare>
+        </div>
+  );
+}
 
 function formatUSD(amount)
 {
